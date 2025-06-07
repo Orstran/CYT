@@ -110,7 +110,7 @@
                     <!-- 添加输入框以支持直接跳转 -->
                     <div class="ms-3 mb-2">
                         <form action="" method="get" class="d-inline-flex align-items-center">
-                            <input type="number" name="page" min="1" max="{{ page_obj.paginator.num_pages }}" value="{{ page_obj.number }}"
+                            <input type="number" name="page" min="1" max="{{ page_obj.paginator.num_pages }}" value="{{ page_zobj.number }}"
                                    class="form-control form-control-sm me-2" style="width: 60px;" placeholder="页号">
                             <button type="submit" class="btn btn-outline-primary btn-sm">跳转</button>
                         </form>
@@ -124,27 +124,47 @@
             </div>
 
             <!-- 右侧边栏 -->
-            <div class="col-md-4 mt-5">
+            <div class="col-md-4">
                 <!-- 热门动漫导航 -->
                 <div class="card mb-5 shadow-sm">
                     <div class="card-header bg-primary text-white">
                         <h5 class="mb-0">热门动漫导航</h5>
                     </div>
-                    <div class="card-body anime-scroll" style="min-height: 350px; overflow-y: auto;">
+                    <div class="card-body" style="min-height: 400px">
                         {% if anime_navs %}
-                            <div class="row">
-                                {% for anime in anime_navs %}
-                                    <div class="col-4 mb-3">
-                                        <a href="{{ anime.url }}" target="_blank" class="text-decoration-none">
-                                            {% if anime.image %}
-                                                <img src="{{ anime.image.url }}" alt="{{ anime.title }}" class="img-fluid rounded" style="width: 100%; height: auto;">
-                                            {% else %}
-                                                <img src="{% static 'images/placeholder.jpg' %}" alt="{{ anime.title }}" class="img-fluid rounded" style="width: 100%; height: auto;">
-                                            {% endif %}
-                                            <p class="text-center small mt-2">{{ anime.title }}</p>
-                                        </a>
-                                    </div>
-                                {% endfor %}
+                            <div id="animeCarousel" class="carousel slide" data-bs-ride="carousel">
+                                <div class="carousel-inner">
+                                    {% for anime in anime_navs %}
+                                        {% if forloop.counter0|divisibleby:3 %}
+                                            <div class="carousel-item{% if forloop.first %} active{% endif %}">
+                                                <div class="row">
+                                        {% endif %}
+                                                    <div class="col-4 mb-3">
+                                                        <a href="{{ anime.url }}" target="_blank" class="text-decoration-none">
+                                                            {% if anime.image %}
+                                                                <img src="{{ anime.image.url }}" alt="{{ anime.title }}" class="img-fluid rounded" style="width: 100%; height: auto;">
+                                                            {% else %}
+                                                                <img src="{% static 'images/placeholder.jpg' %}" alt="{{ anime.title }}" class="img-fluid rounded" style="width: 100%; height: auto;">
+                                                            {% endif %}
+                                                            <p class="text-center small mt-2">{{ anime.title }}</p>
+                                                        </a>
+                                                    </div>
+                                        {% if forloop.counter|divisibleby:3 or forloop.last %}
+                                                </div>
+                                            </div>
+                                        {% endif %}
+                                    {% endfor %}
+                                </div>
+                                {% if anime_navs|length > 3 %}
+                                    <button class="carousel-control-prev" type="button" data-bs-target="#animeCarousel" data-bs-slide="prev">
+                                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                        <span class="visually-hidden">Previous</span>
+                                    </button>
+                                    <button class="carousel-control-next" type="button" data-bs-target="#animeCarousel" data-bs-slide="next">
+                                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                        <span class="visually-hidden">Next</span>
+                                    </button>
+                                {% endif %}
                             </div>
                         {% else %}
                             <p class="text-muted text-center">暂无动漫导航</p>
@@ -157,16 +177,17 @@
                     <div class="card-header bg-primary text-white">
                         <h5 class="mb-0">常用网站导航</h5>
                     </div>
-                    <div class="card-body website-scroll" style="min-height: 350px; overflow-y: auto; min-width:200px">
+                    <div class="card-body website-scroll" style="min-height: 400px; overflow-y: auto; min-width:200px">
                         {% if website_navs %}
                             <div class="row">
                                 {% for website in website_navs %}
-                                    <div class="col-4 mb-3 website-item">
+                                    <div class="col-3 mb-3 website-item">
                                         <a href="{{ website.url }}" target="_blank" class="text-decoration-none">{{ website.title }}</a>
-                                        <div class="website-desc tooltip">
-                                            {{ website.description|truncatechars:50 }}
-                                        </div>
+                                        <p class="text-muted small website-desc">{{ website.description|truncatechars:50 }}</p>
                                     </div>
+                                    {% if forloop.counter|divisibleby:4 %}
+                                        </div><div class="row">
+                                    {% endif %}
                                 {% endfor %}
                             </div>
                         {% else %}
@@ -230,23 +251,27 @@
             box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
         }
         /* 优化导航区域样式 */
-        .anime-scroll {
-            max-height: 400px;
-            overflow-y: auto;
-            padding-right: 10px;
+        #animeCarousel {
+            max-height: 200px;
+            overflow: hidden;
         }
-        .anime-scroll::-webkit-scrollbar {
-            width: 8px;
+        #animeCarousel .carousel-item {
+            padding: 10px;
         }
-        .anime-scroll::-webkit-scrollbar-thumb {
-            background: #007bff;
-            border-radius: 4px;
+        #animeCarousel .carousel-control-prev, #animeCarousel .carousel-control-next {
+            width: 8%;
+            background: transparent;
+            opacity: 0;
+            transition: opacity 0.3s ease;
         }
-        .anime-scroll::-webkit-scrollbar-track {
-            background: #f1f1f1;
+        #animeCarousel:hover .carousel-control-prev, #animeCarousel:hover .carousel-control-next {
+            opacity: 0.7;
+        }
+        #animeCarousel .carousel-control-prev-icon, #animeCarousel .carousel-control-next-icon {
+            background-size: 50%;
         }
         .website-scroll {
-            max-height: 400px;
+            max-height: 200px;
             overflow-y: auto;
             padding-right: 10px;
         }
@@ -262,12 +287,6 @@
         }
         .website-desc {
             display: none;
-            position: absolute;
-            background-color: #333;
-            color: white;
-            padding: 5px;
-            border-radius: 3px;
-            z-index: 1;
         }
         .website-item:hover .website-desc {
             display: block;
