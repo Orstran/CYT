@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+{% load static comment_tags %}
+
+{% block title %}{{ post.title }}{% endblock %}
+
+{% block content %}
+    <div class="container mt-5">
+        <div class="card mb-4" style="background: rgba(255, 255, 255, 0.95);">
+            <div class="card-body">
+                <h1 class="card-title">{{ post.title }}</h1>
+                <div class="text-muted mb-3">
+                    <small>作者：{{ post.author.username }} | 分类：{{ post.category.name }} | 时间：{{ post.created_date|date:"Y-m-d H:i" }}</small>
+                    {% if post.custom_category or post.tags %}
+                        <br>
+                        <small>
+                            {% if post.custom_category %}自定义分类：{{ post.custom_category }} | {% endif %}
+                            {% if post.tags %}标签：{{ post.tags }} {% endif %}
+                        </small>
+                    {% endif %}
+                </div>
+                <p class="card-text">{{ post.content|safe }}</p>
+            </div>
+        </div>
+
+        <div class="card mt-4 comment-section" style="background: rgba(255, 255, 255, 0.95);">
+            <div class="card-body">
+                <h4>评论区</h4>
+                {% if error_message %}
+                    <div class="alert alert-warning" role="alert">{{ error_message }}</div>
+                {% endif %}
+                {% if request.user.is_authenticated %}
+                    <form method="POST" action="{% url 'add_comment' post.id %}">
+                        {% csrf_token %}
+                        <textarea class="form-control" name="content" rows="3" required placeholder="写下你的评论..."></textarea>
+                        <button type="submit" class="btn btn-primary mt-2">发表评论</button>
+                    </form>
+                {% else %}
+                    <p class="text-muted">请 <a href="{% url 'login' %}">登录</a> 后发表评论。</p>
+                {% endif %}
+
+                {% if parent_comments %}
+                    {% render_comments parent_comments replies_dict %}
+                {% else %}
+                    <p class="text-muted mt-3">暂无评论，快来发表第一条评论吧！</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const replyToggles = document.querySelectorAll('.reply-toggle');
+            const toggleReplies = document.querySelectorAll('.toggle-replies');
+
+            // Handle reply form toggle
+            replyToggles.forEach(toggle => {
+                toggle.addEventListener('click', function () {
+                    const commentId = this.getAttribute('data-comment-id');
+                    const replyForm = document.getElementById(`reply-form-${commentId}`);
+                    if (replyForm.style.display === 'none' || !replyForm.style.display) {
+                        replyForm.style.display = 'block';
+                        this.textContent = '取消';
+                    } else {
+                        replyForm.style.display = 'none';
+                        this.textContent = '回复';
+                    }
+                });
+            });
+
+            // Handle collapse/expand replies
+            toggleReplies.forEach(toggle => {
+                const commentId = toggle.getAttribute('data-comment-id');
+                const repliesContainer = document.querySelector(`.replies-container[data-comment-id="${commentId}"]`);
+                const caretIcon = toggle.querySelector('.caret-icon');
+
+                toggle.addEventListener('click', function () {
+                    if (repliesContainer.style.display === 'none' || !repliesContainer.style.display) {
+                        repliesContainer.style.display = 'block';
+                        toggle.textContent = '收起 ';
+                        caretIcon.textContent = '▼';
+                    } else {
+                        repliesContainer.style.display = 'none';
+                        toggle.textContent = '展开 ';
+                        caretIcon.textContent = '▲';
+                    }
+                });
+            });
+        });
+    </script>
+{% endblock %}
+
+<!-- 修改记录：
+1. 移除原有的静态评论显示逻辑，替换为 render_comments 自定义模板标签，支持递归渲染嵌套评论。
+2. 保留顶层评论表单，仅限登录用户使用，并为未登录用户添加登录提示。
+3. 添加 JavaScript 脚本，通过 reply-toggle 类控制回复表单的显示/隐藏，提升用户体验。
+4. 调整评论区结构，移除单层嵌套逻辑，支持多级评论显示。
+5. 更新 render_comments 调用，传递 parent_comments 和 replies_dict，支持两级评论结构。
+6. 添加 toggle-replies 功能的 JavaScript 处理，支持收起/展开回复容器。
+7. 更新 caret-icon 的文本内容以提供视觉反馈（▼为展开，▲为收起）。
+-->

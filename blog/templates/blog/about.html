@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}关于我们{% endblock %}
+
+{% block content %}
+    <div class="container mt-5">
+        <div class="card shadow-lg border-0">
+            <div class="card-body text-center p-5">
+                <h1 class="display-4 text-primary mb-4">关于我们</h1>
+                <p class="lead">{{ about.content|safe }}</p>
+                <div class="mt-4">
+                    <a href="{% url 'home' %}" class="btn btn-outline-primary btn-lg rounded-pill">返回首页</a>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+<!-- 修改记录：创建了 about.html 模板，设计了精美的关于页面样式，使用 shadow-lg 和 border-0 增强视觉效果。 -->

@@ -1,0 +1,85 @@
+{% load static comment_tags %}
+
+{% for comment in parent_comments %}
+    <!-- 父评论（一级） -->
+    <div class="border rounded p-3 my-3 comment-thread">
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <strong>{{ comment.author.username }}</strong>
+            </div>
+            <small class="text-muted">{{ comment.created_at|date:"Y-m-d H:i" }}</small>
+        </div>
+        <p class="mt-2">{{ comment.content }}</p>
+        {% if request.user.is_authenticated %}
+            <div class="d-flex gap-2 mt-2">
+                <button class="btn btn-sm btn-outline-primary reply-toggle" data-comment-id="{{ comment.id }}">回复</button>
+                {% with replies=replies_dict|get_item:comment.id %}
+                    {% if replies and replies|length > 0 %}
+                        <button class="btn btn-sm btn-outline-secondary toggle-replies" data-comment-id="{{ comment.id }}">
+                            收起 <span class="caret-icon">▼</span>
+                        </button>
+                    {% endif %}
+                {% endwith %}
+            </div>
+            <form method="POST" action="{% url 'add_comment' post.id %}" class="reply-form mt-2" id="reply-form-{{ comment.id }}" style="display: none;">
+                {% csrf_token %}
+                <input type="hidden" name="parent_id" value="{{ comment.id }}">
+                <textarea class="form-control" name="content" rows="2" placeholder="回复 {{ comment.author.username }}..." required></textarea>
+                <button type="submit" class="btn btn-sm btn-primary mt-1">提交回复</button>
+            </form>
+        {% endif %}
+
+        <!-- 嵌套容器：所有回复（平级显示，固定缩进） -->
+        <div class="replies-container" style="margin-left: 20px; border-left: 2px solid #ddd; padding-left: 10px;" data-comment-id="{{ comment.id }}">
+            {% with replies=replies_dict|get_item:comment.id %}
+                {% if replies and replies|length > 0 %}
+                    <p>共有{{ replies|length }}条评论</p> <!-- Debug output -->
+                    {% for reply in replies %}
+                        <div class="reply-thread p-2 my-2">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <strong>{{ reply.author.username }}</strong>
+                                    {% if reply.parent %}
+                                        <small class="text-muted">回复 {{ reply.parent.author.username }}</small>
+                                    {% endif %}
+                                </div>
+                                <small class="text-muted">{{ reply.created_at|date:"Y-m-d H:i" }}</small>
+                            </div>
+                            <p class="mt-1 mb-0">{{ reply.content }}</p>
+                            {% if request.user.is_authenticated %}
+                                <button class="btn btn-sm btn-outline-primary reply-toggle" data-comment-id="{{ reply.id }}">回复</button>
+                                <form method="POST" action="{% url 'add_comment' post.id %}" class="reply-form mt-2" id="reply-form-{{ reply.id }}" style="display: none;">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="parent_id" value="{{ comment.id }}"> <!-- Always reply to the parent comment -->
+                                    <textarea class="form-control" name="content" rows="2" placeholder="回复 {{ reply.author.username }}..." required></textarea>
+                                    <button type="submit" class="btn btn-sm btn-primary mt-1">提交回复</button>
+                                </form>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <p>该评论下没有更多回复</p> <!-- Debug output -->
+                {% endif %}
+            {% endwith %}
+        </div>
+    </div>
+{% endfor %}
+
+<!-- 修改记录：
+1. 新建 comment_thread.html 模板，用于递归渲染评论线程。
+2. 使用 margin-left 根据 level 参数实现动态缩进，每层增加 20px。
+3. 添加回复按钮和隐藏的回复表单，支持对任意评论进行回复。
+4. 显示“回复某用户”的提示，增强回复上下文的清晰度。
+5. 使用 reply-toggle 类配合 JavaScript 控制回复表单的显示/隐藏。
+6. 添加 {% load mathfilters %} 以支持 mul 过滤器，修复 Invalid filter: 'mul' 错误。
+7. 移除递归渲染逻辑，仅支持两级评论结构：父评论（一级）和所有回复（二级，固定缩进 10px）。
+8. 移除对 mathfilters 的依赖，因为不再需要动态缩进。
+9. 调整回复表单的 parent_id，确保所有回复都指向父评论。
+10. 修正 replies_dict 访问逻辑，使用自定义 get_item 过滤器正确获取回复列表。
+11. 添加 {% load comment_tags %} 以加载 get_item 过滤器，解决 Invalid filter: 'get_item' 错误。
+12. 调整回复的缩进为 10px，提升视觉效果。
+13. 添加调试输出，检查 replies 变量以排查回复未显示的问题。
+14. 添加 replies-container div，确保所有回复平级显示在嵌套容器中，模仿抖音评论样式。
+15. 添加 toggle-replies 按钮，支持收起/展开回复容器。
+16. 添加 caret-icon 元素，用于显示展开/收起的视觉反馈。
+-->

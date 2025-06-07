@@ -1,0 +1,12 @@
+{% extends "blog/admin/base_admin.html" %}
+
+{% block title %}创建文章{% endblock %}
+
+{% block content %}
+    <h2>创建新文章</h2>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-primary">创建</button>
+    </form>
+{% endblock %}

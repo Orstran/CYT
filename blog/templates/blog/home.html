@@ -1,0 +1,282 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}首页{% endblock %}
+
+{% block content %}
+    <!-- 轮播图替换 hero-section -->
+    <div id="carouselExample" class="carousel slide" data-bs-ride="carousel" style="animation: fadeIn 2s; background: rgba(255, 255, 255, 0.8);">
+        <div class="carousel-inner">
+            <div class="carousel-item active">
+                <img src="{% static 'images/anime.png' %}" class="d-block w-100" alt="占位图 1" style="height: 400px; object-fit: cover;">
+                <div class="carousel-caption d-none d-md-block text-center">
+                    <h1 class="display-4 text-dark animated bounceInDown" style="text-shadow: 2px 2px 4px #aaa; font-weight: bold;">欢迎探索精彩内容</h1>
+                    <p class="lead text-dark animated fadeIn" style="text-shadow: 1px 1px 3px #aaa;">发现属于你的世界！</p>
+                    {% if user.is_authenticated %}
+                        <a href="{% url 'post_new' %}" class="btn btn-success btn-lg rounded-pill mt-3 animated pulse">立即发布</a>
+                    {% else %}
+                        <a href="{% url 'login' %}" class="btn btn-primary btn-lg rounded-pill mt-3 animated pulse">登录发布</a>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="carousel-item">
+                <img src="{% static 'images/write.png' %}" class="d-block w-100" alt="占位图 2" style="height: 400px; object-fit: cover;">
+                <div class="carousel-caption d-none d-md-block text-center">
+                    <h1 class="display-4 text-dark animated bounceInDown" style="text-shadow: 2px 2px 4px #aaa; font-weight: bold;">分享你的想法</h1>
+                    <p class="lead text-dark animated fadeIn" style="text-shadow: 1px 1px 3px #aaa;">与世界互动！</p>
+                    {% if user.is_authenticated %}
+                        <a href="{% url 'post_new' %}" class="btn btn-success btn-lg rounded-pill mt-3 animated pulse">立即发布</a>
+                    {% else %}
+                        <a href="{% url 'login' %}" class="btn btn-primary btn-lg rounded-pill mt-3 animated pulse">登录发布</a>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="carousel-item">
+                <img src="{% static 'images/community.png' %}" class="d-block w-100" alt="占位图 3" style="height: 400px; object-fit: cover;">
+                <div class="carousel-caption d-none d-md-block text-center">
+                    <h1 class="display-4 text-dark animated bounceInDown" style="text-shadow: 2px 2px 4px #aaa; font-weight: bold;">加入我们的社区</h1>
+                    <p class="lead text-dark animated fadeIn" style="text-shadow: 1px 1px 3px #aaa;">一起成长！</p>
+                    {% if user.is_authenticated %}
+                        <a href="{% url 'post_new' %}" class="btn btn-success btn-lg rounded-pill mt-3 animated pulse">立即发布</a>
+                    {% else %}
+                        <a href="{% url 'login' %}" class="btn btn-primary btn-lg rounded-pill mt-3 animated pulse">登录发布</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <button class="carousel-control-prev" type="button" data-bs-target="#carouselExample" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#carouselExample" data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Next</span>
+        </button>
+    </div>
+
+    <div class="container mt-5">
+        <div class="row">
+            <!-- 主内容区域 -->
+            <div class="col-md-8">
+                <h2 class="text-center mb-4 text-primary">最新文章</h2>
+                <div class="row">
+                    {% for post in page_obj %}
+                        <div class="col-md-6 mb-4">
+                            <div class="card h-100 shadow-sm animated zoomIn" style="transition: all 0.3s; background: rgba(255, 255, 255, 0.95);">
+                                <div class="card-body">
+                                    <h3 class="card-title"><a href="{% url 'post_detail' post.id %}" class="text-decoration-none">{{ post.title }}</a></h3>
+                                    <p class="card-text">{{ post.content|truncatechars:100 }}</p>
+                                    <div class="text-muted small">
+                                        作者：{{ post.author.username }} | 分类：{{ post.category.name }} | 时间：{{ post.created_date|date:"Y-m-d H:i" }}
+                                        {% if post.custom_category or post.tags %}
+                                            <br>
+                                            {% if post.custom_category %}自定义分类：{{ post.custom_category }} | {% endif %}
+                                            {% if post.tags %}标签：{{ post.tags }} {% endif %}
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% empty %}
+                        <div class="col-12 text-center">
+                            <p class="text-muted">暂无文章，<a href="{% url 'post_new' %}" class="text-primary">点击发布第一篇！</a></p>
+                        </div>
+                    {% endfor %}
+                </div>
+
+                <!-- 改进分页部分 -->
+                <div class="pagination mt-4 d-flex justify-content-center align-items-center flex-wrap">
+                    <span class="step-links">
+                        {% if page_obj.has_previous %}
+                            <a href="?page=1" class="btn btn-outline-primary rounded-pill me-2 mb-2">« 第一页</a>
+                            <a href="?page={{ page_obj.previous_page_number }}" class="btn btn-outline-primary rounded-pill me-2 mb-2">上一页</a>
+                        {% endif %}
+
+                        <!-- 显示页号按钮 -->
+                        {% for num in page_obj.paginator.page_range %}
+                            {% if num == page_obj.number %}
+                                <a href="?page={{ num }}" class="btn btn-primary rounded-pill me-2 mb-2 active">{{ num }}</a>
+                            {% else %}
+                                <a href="?page={{ num }}" class="btn btn-outline-primary rounded-pill me-2 mb-2">{{ num }}</a>
+                            {% endif %}
+                        {% endfor %}
+
+                        {% if page_obj.has_next %}
+                            <a href="?page={{ page_obj.next_page_number }}" class="btn btn-outline-primary rounded-pill me-2 mb-2">下一页</a>
+                            <a href="?page={{ page_obj.paginator.num_pages }}" class="btn btn-outline-primary rounded-pill me-2 mb-2">最后一页 »</a>
+                        {% endif %}
+                    </span>
+
+                    <!-- 添加输入框以支持直接跳转 -->
+                    <div class="ms-3 mb-2">
+                        <form action="" method="get" class="d-inline-flex align-items-center">
+                            <input type="number" name="page" min="1" max="{{ page_obj.paginator.num_pages }}" value="{{ page_obj.number }}"
+                                   class="form-control form-control-sm me-2" style="width: 60px;" placeholder="页号">
+                            <button type="submit" class="btn btn-outline-primary btn-sm">跳转</button>
+                        </form>
+                    </div>
+
+                    <!-- 显示当前页和总页数 -->
+                    <span class="current mx-3 mb-2">
+                        第 {{ page_obj.number }} 页，共 {{ page_obj.paginator.num_pages }} 页
+                    </span>
+                </div>
+            </div>
+
+            <!-- 右侧边栏 -->
+            <div class="col-md-4 mt-5">
+                <!-- 热门动漫导航 -->
+                <div class="card mb-5 shadow-sm">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0">热门动漫导航</h5>
+                    </div>
+                    <div class="card-body anime-scroll" style="min-height: 350px; overflow-y: auto;">
+                        {% if anime_navs %}
+                            <div class="row">
+                                {% for anime in anime_navs %}
+                                    <div class="col-4 mb-3">
+                                        <a href="{{ anime.url }}" target="_blank" class="text-decoration-none">
+                                            {% if anime.image %}
+                                                <img src="{{ anime.image.url }}" alt="{{ anime.title }}" class="img-fluid rounded" style="width: 100%; height: auto;">
+                                            {% else %}
+                                                <img src="{% static 'images/placeholder.jpg' %}" alt="{{ anime.title }}" class="img-fluid rounded" style="width: 100%; height: auto;">
+                                            {% endif %}
+                                            <p class="text-center small mt-2">{{ anime.title }}</p>
+                                        </a>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            <p class="text-muted text-center">暂无动漫导航</p>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- 常用网站导航 -->
+                <div class="card shadow-sm">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0">常用网站导航</h5>
+                    </div>
+                    <div class="card-body website-scroll" style="min-height: 350px; overflow-y: auto; min-width:200px">
+                        {% if website_navs %}
+                            <div class="row">
+                                {% for website in website_navs %}
+                                    <div class="col-4 mb-3 website-item">
+                                        <a href="{{ website.url }}" target="_blank" class="text-decoration-none">{{ website.title }}</a>
+                                        <div class="website-desc tooltip">
+                                            {{ website.description|truncatechars:50 }}
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            <p class="text-muted text-center">暂无网站导航</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .hero-section {
+            position: relative;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        .animated {
+            animation-duration: 1s;
+            animation-fill-mode: both;
+        }
+        .bounceInDown {
+            animation-name: bounceInDown;
+        }
+        @keyframes bounceInDown {
+            from, 60%, 75%, 90%, to { animation-timing-function: cubic-bezier(0.215, 0.610, 0.355, 1.000); }
+            0% { opacity: 0; transform: translate3d(0, -3000px, 0); }
+            60% { opacity: 1; transform: translate3d(0, 25px, 0); }
+            75% { transform: translate3d(0, -10px, 0); }
+            90% { transform: translate3d(0, 5px, 0); }
+            to { transform: none; }
+        }
+        .fadeIn {
+            animation-name: fadeIn;
+        }
+        .zoomIn {
+            animation-name: zoomIn;
+        }
+        @keyframes zoomIn {
+            from { opacity: 0; transform: scale3d(0.3, 0.3, 0.3); }
+            50% { opacity: 1; }
+        }
+        .pulse {
+            animation-name: pulse;
+        }
+        @keyframes pulse {
+            from { transform: scale3d(1, 1, 1); }
+            50% { transform: scale3d(1.05, 1.05, 1.05); }
+            to { transform: scale3d(1, 1, 1); }
+        }
+        .pagination .active {
+            pointer-events: none;
+            background-color: #007bff;
+            color: white;
+            border-color: #007bff;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+        /* 优化导航区域样式 */
+        .anime-scroll {
+            max-height: 400px;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+        .anime-scroll::-webkit-scrollbar {
+            width: 8px;
+        }
+        .anime-scroll::-webkit-scrollbar-thumb {
+            background: #007bff;
+            border-radius: 4px;
+        }
+        .anime-scroll::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        .website-scroll {
+            max-height: 400px;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+        .website-scroll::-webkit-scrollbar {
+            width: 8px;
+        }
+        .website-scroll::-webkit-scrollbar-thumb {
+            background: #007bff;
+            border-radius: 4px;
+        }
+        .website-scroll::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        .website-desc {
+            display: none;
+            position: absolute;
+            background-color: #333;
+            color: white;
+            padding: 5px;
+            border-radius: 3px;
+            z-index: 1;
+        }
+        .website-item:hover .website-desc {
+            display: block;
+        }
+    </style>
+{% endblock %}
+
+<!-- 修改记录：
+1. 降低动漫导航和网站导航区域高度（max-height: 200px）以与文章显示板块（包括卡片内容）对齐。
+2. 修复动漫导航：修正HTML结构错误（`</leukin-row>`改为`</div>`），确保6个动漫按每行3个分组为2个carousel-item，支持轮播和手动切换。
+3. 网站导航：添加描述折叠效果，鼠标悬停时显示描述（`.website-desc`默认隐藏，悬停时显示）。
+-->

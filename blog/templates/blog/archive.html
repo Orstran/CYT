@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}文章归档{% endblock %}
+
+{% block content %}
+    <div class="container mt-5">
+        <h1 class="text-center mb-4 text-primary">文章归档</h1>
+        <div class="row">
+            {% for post in posts %}
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-body">
+                            <h5 class="card-title"><a href="{% url 'post_detail' post.id %}" class="text-decoration-none">{{ post.title }}</a></h5>
+                            <p class="card-text">{{ post.content|truncatechars:100 }}</p>
+                            <p class="text-muted small">发布时间: {{ post.created_date|date:"Y-m-d H:i" }}</p>
+                        </div>
+                    </div>
+                </div>
+            {% empty %}
+                <p class="text-center text-muted">暂无文章。</p>
+            {% endfor %}
+        </div>
+        <div class="text-center mt-4">
+            <a href="{% url 'home' %}" class="btn btn-outline-primary btn-lg rounded-pill">返回首页</a>
+        </div>
+    </div>
+{% endblock %}
+
+<!-- 修改记录：创建了 archive.html 模板，设计了精美的文章归档页面，使用网格布局和卡片样式。 -->

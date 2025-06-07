@@ -1,0 +1,12 @@
+{% extends "blog/admin/base_admin.html" %}
+
+{% block title %}编辑文章{% endblock %}
+
+{% block content %}
+    <h2>编辑文章: {{ post.title }}</h2>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-primary">更新</button>
+    </form>
+{% endblock %}

@@ -1,0 +1,14 @@
+{% extends "blog/admin/base_admin.html" %}
+
+{% block title %}权限不足{% endblock %}
+
+{% block content %}
+    <div class="container mt-5">
+        <h2 class="text-center">权限不足</h2>
+        <p class="text-center">您当前账户没有权限访问后台管理系统。请使用超级账户登录。</p>
+        <p class="text-center">
+            <a href="{% url 'login' %}?next={{ next }}" class="btn btn-primary">登录</a>
+            <a href="{% url 'home' %}" class="btn btn-secondary">返回首页</a>
+        </p>
+    </div>
+{% endblock %}

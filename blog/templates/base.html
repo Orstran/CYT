@@ -1,0 +1,207 @@
+{% load static %}
+
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}CYT博客系统{% endblock %}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light shadow-sm">
+        <div class="container">
+            <a class="navbar-brand animated pulse" href="{% url 'home' %}">CYT博客系统</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link animated pulse" href="{% url 'home' %}">首页</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link animated pulse" href="{% url 'categories' %}">分类目录</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link animated pulse" href="{% url 'archive' %}">文章归档</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link animated pulse" href="{% url 'about' %}">关于我们</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link animated pulse" href="{% url 'contact' %}">联系我们</a>
+                    </li>
+                </ul>
+                <ul class="navbar-nav ms-auto align-items-center">
+                    {% if user.is_authenticated %}
+                        <li class="nav-item">
+                            <a class="nav-link btn btn-success text-white rounded-pill me-3 animated pulse" href="{% url 'post_new' %}">发布文章</a>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle d-flex align-items-center animated pulse" href="#" id="profileDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <img src="{% if user.userprofile.profile_image %}{{ user.userprofile.profile_image.url }}{% else %}{% static 'images/default.png' %}{% endif %}"
+                                     alt="用户头像"
+                                     class="rounded-circle me-3"
+                                     style="width: 40px; height: 40px; object-fit: cover;">
+                                <span>{{ user.username }}</span>
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end shadow-sm rounded-3" aria-labelledby="profileDropdown" style="background: rgba(255, 255, 255, 0.95);">
+                                <li><span class="dropdown-item-text fw-bold">{{ user.username }}</span></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item animated zoomIn" href="{% url 'password_change' %}">修改密码</a></li>
+                                <li><a class="dropdown-item animated zoomIn" href="#" onclick="document.getElementById('profileImageInput').click()">上传头像</a></li>
+                                <li><a class="dropdown-item animated zoomIn" href="{% url 'logout' %}">退出</a></li>
+                            </ul>
+                        </li>
+                        <!-- Hidden file input for profile image upload -->
+                        <form id="profileImageForm" action="{% url 'upload_profile_image' %}" method="post" enctype="multipart/form-data" style="display: none;">
+                            {% csrf_token %}
+                            <input type="file" id="profileImageInput" name="profile_image" accept="image/*" onchange="this.form.submit()">
+                        </form>
+                    {% else %}
+                        <li class="nav-item">
+                            <a class="nav-link animated pulse" href="{% url 'login' %}">登录</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link animated pulse" href="{% url 'register' %}">注册</a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endfor %}
+        {% block content %}{% endblock %}
+    </div>
+
+    <style>
+        /* Set transparent navbar background */
+        .navbar-light {
+            background-color: transparent !important; /* Transparent background */
+        }
+        /* Navbar link, brand, and button styling */
+        .nav-link, .btn-success, .dropdown-toggle {
+            font-size: 1.1rem; /* Explicit font size for readability */
+            color: #333 !important; /* Base color from style.css body */
+            transition: background-color 0.3s, color 0.3s, transform 0.3s;
+            border-radius: 5px;
+            padding: 8px 12px;
+        }
+        /* Increase font size and bold the brand text */
+        .navbar-brand {
+            font-size: 1.8rem; /* Increase font size */
+            font-weight: bold; /* Make it bold */
+            color: #333 !important; /* Base color from style.css body */
+            transition: background-color 0.3s, color 0.3s, transform 0.3s;
+            border-radius: 5px;
+            padding: 8px 12px;
+        }
+        .nav-link:hover, .navbar-brand:hover, .btn-success:hover, .dropdown-toggle:hover {
+            background-color: #0056b3 !important; /* Deep blue on hover */
+            color: #ffffff !important;
+            transform: scale(1.05);
+        }
+        /* Dropdown menu styling */
+        .dropdown:hover .dropdown-menu {
+            display: block;
+            margin-top: 0;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+        .dropdown-menu {
+            border: none;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 10px;
+            padding: 10px;
+        }
+        .dropdown-item {
+            font-size: 1.1rem; /* Match navbar font size */
+            color: #333 !important; /* Base color from style.css body */
+            padding: 10px 20px;
+            border-radius: 5px;
+            transition: background-color 0.3s, color 0.3s, transform 0.3s;
+        }
+        .dropdown-item:hover {
+            background-color: #0056b3 !important; /* Deep blue on hover */
+            color: #ffffff !important;
+            transform: translateX(5px);
+        }
+        .dropdown-item-text {
+            font-size: 1.1rem; /* Match navbar font size */
+            padding: 10px 20px;
+            color: #333;
+            font-weight: bold;
+        }
+        /* Profile image styling */
+        .rounded-circle {
+            border: 2px solid #007bff;
+            transition: transform 0.3s;
+        }
+        .rounded-circle:hover {
+            transform: scale(1.1);
+        }
+        /* Ensure dropdown aligns properly */
+        .dropdown-menu-end {
+            right: 0;
+        }
+        /* Animations from home.html */
+        .animated {
+            animation-duration: 0.5s;
+            animation-fill-mode: both;
+        }
+        .pulse {
+            animation-name: pulse;
+        }
+        @keyframes pulse {
+            from { transform: scale3d(1, 1, 1); }
+            50% { transform: scale3d(1.05, 1.05, 1.05); }
+            to { transform: scale3d(1, 1, 1); }
+        }
+        .zoomIn {
+            animation-name: zoomIn;
+        }
+        @keyframes zoomIn {
+            from { opacity: 0; transform: scale3d(0.3, 0.3, 0.3); }
+            50% { opacity: 1; }
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+    </style>
+
+    <script>
+        // Enhance dropdown accessibility
+        document.addEventListener('DOMContentLoaded', function () {
+            const dropdowns = document.querySelectorAll('.dropdown');
+            dropdowns.forEach(dropdown => {
+                dropdown.addEventListener('mouseenter', function () {
+                    const toggle = this.querySelector('.dropdown-toggle');
+                    const menu = this.querySelector('.dropdown-menu');
+                    if (toggle && menu) {
+                        menu.classList.add('show');
+                        toggle.setAttribute('aria-expanded', 'true');
+                    }
+                });
+                dropdown.addEventListener('mouseleave', function () {
+                    const toggle = this.querySelector('.dropdown-toggle');
+                    const menu = this.querySelector('.dropdown-menu');
+                    if (toggle && menu) {
+                        menu.classList.remove('show');
+                        toggle.setAttribute('aria-expanded', 'false');
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

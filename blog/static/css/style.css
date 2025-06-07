@@ -1,0 +1,166 @@
+body {
+    background: url('../images/background.png') no-repeat center/cover fixed;
+    font-family: 'Arial', sans-serif;
+    color: #333;
+    min-height: 100vh;
+}
+
+h1, h2, h4 {
+    color: #2c3e50;
+}
+
+.card {
+    border: none;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+}
+
+.card-title a {
+    color: #007bff;
+    text-decoration: none;
+}
+
+.card-title a:hover {
+    text-decoration: underline;
+}
+
+.btn-primary {
+    background-color: #007bff;
+    border-color: #007bff;
+    border-radius: 25px;
+}
+
+.btn-primary:hover {
+    background-color: #0056b3;
+    border-color: #0056b3;
+}
+
+.pagination .step-links a {
+    margin: 0 5px;
+    padding: 5px 10px;
+    background-color: #007bff;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+}
+
+.pagination .step-links a:hover {
+    background-color: #0056b3;
+}
+
+.pagination .current {
+    font-weight: bold;
+    margin: 0 10px;
+}
+
+.form-control {
+    border-radius: 10px;
+    border: 1px solid #ced4da;
+}
+
+.form-control:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}
+
+.text-muted {
+    font-size: 0.9rem;
+}
+
+.comment-section {
+    background-color: #f1f3f5;
+    padding: 15px;
+    border-radius: 12px;
+}
+
+.comment-thread {
+    background: rgba(255, 255, 255, 0.95);
+    transition: box-shadow 0.3s;
+}
+
+.comment-thread:hover {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.reply-form {
+    transition: opacity 0.3s ease;
+}
+
+.reply-toggle {
+    transition: background-color 0.3s;
+}
+
+.reply-toggle:hover {
+    background-color: #e9ecef;
+}
+
+.auth-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 80vh;
+}
+
+.auth-card {
+    width: 100%;
+    max-width: 400px;
+    padding: 20px;
+    background-color: rgba(255, 255, 255, 0.9);
+    border-radius: 15px;
+}
+
+.auth-form .form-control {
+    border-radius: 25px;
+    padding: 10px 15px;
+}
+
+.auth-form .form-label {
+    font-weight: 500;
+}
+
+.btn-lg {
+    padding: 10px;
+    font-size: 1.1rem;
+}
+
+.rounded-pill {
+    border-radius: 50rem !important;
+}
+
+.nav-link-custom {
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.nav-link-custom:hover {
+    color: #ffd700 !important;
+    transform: translateY(-2px);
+    display: inline-block;
+}
+
+.nav-link-custom::after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 2px;
+    bottom: -2px;
+    left: 50%;
+    background-color: #ffd700;
+    transition: all 0.3s ease;
+}
+
+.nav-link-custom:hover::after {
+    width: 100%;
+    left: 0;
+}
+
+/* 修改记录：
+1. 添加 nav-link-custom 类及其悬停效果，包括颜色变化、轻微上移和下划线动画（之前记录）。
+2. 新增 comment-thread 样式，支持半透明背景和 hover 阴影效果，增强嵌套评论的视觉层次。
+3. 新增 reply-form 和 reply-toggle 样式，优化回复表单和按钮的过渡动画。
+4. 调整 comment-section 的 border-radius 为 12px，与其他卡片样式保持一致。
+*/

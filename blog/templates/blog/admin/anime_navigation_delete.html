@@ -1,0 +1,15 @@
+{% extends "blog/admin/base_admin.html" %}
+
+{% block title %}删除动漫导航{% endblock %}
+
+{% block content %}
+    <div class="container mt-5">
+        <h2 class="text-center mb-4">删除动漫导航</h2>
+        <p class="text-center">确定要删除“{{ anime_nav.title }}”吗？此操作无法撤销。</p>
+        <form method="post">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger">确认删除</button>
+            <a href="{% url 'admin_anime_navigation_list' %}" class="btn btn-secondary">取消</a>
+        </form>
+    </div>
+{% endblock %}

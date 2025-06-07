@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}分类目录{% endblock %}
+
+{% block content %}
+    <div class="container mt-5">
+        <h1 class="text-center mb-4 text-primary">分类目录</h1>
+        <div class="row">
+            {% for category in categories %}
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-body text-center">
+                            <h5 class="card-title">{{ category.name }}</h5>
+                            <p class="card-text">查看该分类下的文章</p>
+                            <a href="{% url 'home' %}?category={{ category.id }}" class="btn btn-primary rounded-pill">浏览</a>
+                        </div>
+                    </div>
+                </div>
+            {% empty %}
+                <p class="text-center text-muted">暂无分类。</p>
+            {% endfor %}
+        </div>
+        <div class="text-center mt-4">
+            <a href="{% url 'home' %}" class="btn btn-outline-primary btn-lg rounded-pill">返回首页</a>
+        </div>
+    </div>
+{% endblock %}
+
+<!-- 修改记录：创建了 categories.html 模板，设计了精美的分类目录页面，使用网格布局和卡片样式。 -->

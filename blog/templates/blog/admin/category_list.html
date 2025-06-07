@@ -1,0 +1,21 @@
+{% extends "blog/admin/base_admin.html" %}
+
+{% block title %}分类管理{% endblock %}
+
+{% block content %}
+    <h2>分类列表</h2>
+    <a href="{% url 'admin_category_create' %}" class="btn btn-primary mb-3">创建新分类</a>
+    <ul class="list-group">
+        {% for category in categories %}
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                {{ category.name }} (预定义: {{ category.is_predefined|yesno:"是,否" }})
+                <div>
+                    <a href="{% url 'admin_category_update' category.id %}" class="btn btn-warning btn-sm">编辑</a>
+                    <a href="{% url 'admin_category_delete' category.id %}" class="btn btn-danger btn-sm">删除</a>
+                </div>
+            </li>
+        {% empty %}
+            <li class="list-group-item">暂无分类。</li>
+        {% endfor %}
+    </ul>
+{% endblock %}

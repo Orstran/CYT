@@ -1,0 +1,14 @@
+{% extends "blog/admin/base_admin.html" %}
+
+{% block title %}删除评论{% endblock %}
+
+{% block content %}
+    <h2>确认删除评论</h2>
+    <p>确定要删除此评论吗？这将无法撤销。</p>
+    <p>内容: {{ comment.content|truncatechars:50 }}</p>
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger">删除</button>
+        <a href="{% url 'admin_comment_list' %}" class="btn btn-secondary">取消</a>
+    </form>
+{% endblock %}

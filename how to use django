@@ -1,0 +1,24 @@
+一、Django 框架的模型、视图、路由之间的关系
+1. 模型（Model）：
+
+定义：模型是 Django 的数据层，定义了数据的结构和与数据库的交互逻辑。每个模型类对应数据库中的一张表，模型的字段对应表的列。
+作用：通过 Django ORM（对象关系映射）与数据库交互，执行增删改查作。例如，Post 模型定义了文章的字段（标题、内容、作者等），通过 Post.objects.create（） 创建记录。
+代码示例：Post、Category 等模型（未提供具体代码，但可从 views.py 和 admin.py 推测）。
+2. 视图（View）：
+
+定义：视图是 Django 的逻辑层，处理用户请求，调用模型获取数据，渲染模板生成响应。视图可以是函数（如 post_new）或基于类的视图。
+作用：接收 HTTP 请求（如 GET 或 POST），处理业务逻辑（如验证表单、保存数据），返回 HTTP 响应（渲染模板或重定向）。
+代码示例：views.py 中的 post_new 处理用户发表文章，post_delete 处理超级用户删除文章。
+3. 路由（URL Dispatcher）：
+
+定义：路由定义了 URL 路径与视图函数的映射，位于 urls.py 中。
+作用：将用户请求的 URL 分发到对应的视图函数。例如，/post/new/ 映射到 post_new 视图。
+代码示例：urls.py 中的 path（'post/new/'， views.post_new， name='post_new'）。
+关系：
+
+路由 → 视图：用户通过浏览器访问 URL，Django 的 URL 路由器根据 urls.py 匹配路径，调用对应的视图函数。
+视图 → 模型：视图函数处理请求，可能通过 ORM 调用模型（如 Post.objects.create）与数据库交互，获取或修改数据。
+视图 → 模板：视图将数据传递给模板（通过 render 函数），模板渲染生成 HTML 响应返回给用户。
+模型 ↔ 数据库：模型通过 ORM 与数据库交互，定义数据结构并执行查询。
+
+

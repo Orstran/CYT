@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}发布文章{% endblock %}
+
+{% block content %}
+    <div class="container mt-5">
+        <div class="col-md-8 offset-md-2 bg-light p-4 rounded" style="background: rgba(255, 255, 255, 0.95);">
+            <h2 class="text-center mb-4">发布新文章</h2>
+            <form method="post">
+                {% csrf_token %}
+                <div class="form-group mb-3">
+                    <label for="title" class="form-label">标题</label>
+                    <input type="text" class="form-control" id="title" name="title" required placeholder="输入文章标题">
+                </div>
+                <div class="form-group mb-3">
+                    <label for="content" class="form-label">内容</label>
+                    <textarea class="form-control" id="content" name="content" rows="10" required placeholder="输入文章内容"></textarea>
+                </div>
+                <div class="form-group mb-3">
+                    <label for="category" class="form-label">预设分类</label>
+                    <select class="form-control" id="category" name="category">
+                        <option value="">-- 选择或输入自定义分类 --</option>
+                        {% for category in categories %}
+                            <option value="{{ category.id }}">{{ category.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group mb-3">
+                    <label for="custom_category" class="form-label">自定义分类（可选）</label>
+                    <input type="text" class="form-control" id="custom_category" name="custom_category" placeholder="输入自定义分类">
+                </div>
+                <div class="form-group mb-3">
+                    <label for="tags" class="form-label">标签（用逗号分隔，例如：技术,生活）</label>
+                    <input type="text" class="form-control" id="tags" name="tags" placeholder="输入标签">
+                </div>
+                <button type="submit" class="btn btn-primary w-100">发布</button>
+            </form>
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }} mt-3">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}
+
+<!-- 修改记录：添加半透明背景以确保内容可读性，调整了容器样式以适应全局背景。 -->

@@ -1,0 +1,31 @@
+{% extends "blog/admin/base_admin.html" %}
+
+{% block title %}添加网站导航{% endblock %}
+
+{% block content %}
+    <div class="container mt-5">
+        <h2 class="text-center mb-4">添加网站导航</h2>
+        <form method="post">
+            {% csrf_token %}
+            {% if form.non_field_errors %}
+                <div class="alert alert-danger">
+                    {{ form.non_field_errors }}
+                </div>
+            {% endif %}
+            <div class="mb-3">
+                {{ form.as_p }}
+                <small class="form-text text-muted">请输入不超过200字的描述。</small>
+            </div>
+            <div class="d-flex justify-content-center">
+                <button type="submit" class="btn btn-primary me-2">保存</button>
+                <a href="{% url 'admin_website_navigation_list' %}" class="btn btn-secondary">取消</a>
+            </div>
+        </form>
+    </div>
+{% endblock %}
+
+<!-- 修改记录：
+1. Replaced manual field rendering with {{ form.as_p }} to ensure reliable field IDs and error display, matching category_create.html logic.
+2. Removed enctype="multipart/form-data" as no file uploads are needed.
+3. Kept description length instructions.
+-->

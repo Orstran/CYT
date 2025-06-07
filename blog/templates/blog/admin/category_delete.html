@@ -1,0 +1,13 @@
+{% extends "blog/admin/base_admin.html" %}
+
+{% block title %}删除分类{% endblock %}
+
+{% block content %}
+    <h2>确认删除分类: {{ category.name }}</h2>
+    <p>确定要删除此分类吗？这将无法撤销。</p>
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger">删除</button>
+        <a href="{% url 'admin_category_list' %}" class="btn btn-secondary">取消</a>
+    </form>
+{% endblock %}

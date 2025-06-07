@@ -1,0 +1,39 @@
+{% extends "blog/admin/base_admin.html" %}
+
+{% block title %}文章管理{% endblock %}
+
+{% block content %}
+    <h2>文章列表</h2>
+    <a href="{% url 'admin_post_create' %}" class="btn btn-primary mb-3">创建新文章</a>
+    <div class="row">
+        {% for post in page_obj %}
+            <div class="col-md-4 mb-3">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ post.title }}</h5>
+                        <p class="card-text">{{ post.content|truncatechars:50 }}</p>
+                        <a href="{% url 'admin_post_update' post.id %}" class="btn btn-warning btn-sm">编辑</a>
+                        <a href="{% url 'admin_post_delete' post.id %}" class="btn btn-danger btn-sm">删除</a>
+                    </div>
+                </div>
+            </div>
+        {% empty %}
+            <p>暂无文章。</p>
+        {% endfor %}
+    </div>
+    <div class="pagination mt-4">
+        <span class="step-links">
+            {% if page_obj.has_previous %}
+                <a href="?page=1" class="btn btn-outline-primary">第一页</a>
+                <a href="?page={{ page_obj.previous_page_number }}" class="btn btn-outline-primary">上一页</a>
+            {% endif %}
+            <span class="current mx-3">
+                第 {{ page_obj.number }} 页，共 {{ page_obj.paginator.num_pages }} 页
+            </span>
+            {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}" class="btn btn-outline-primary">下一页</a>
+                <a href="?page={{ page_obj.paginator.num_pages }}" class="btn btn-outline-primary">最后一页</a>
+            {% endif %}
+        </span>
+    </div>
+{% endblock %}

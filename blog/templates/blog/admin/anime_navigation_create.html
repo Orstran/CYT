@@ -1,0 +1,31 @@
+{% extends "blog/admin/base_admin.html" %}
+
+{% block title %}添加动漫导航{% endblock %}
+
+{% block content %}
+    <div class="container mt-5">
+        <h2 class="text-center mb-4">添加动漫导航</h2>
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            {% if form.non_field_errors %}
+                <div class="alert alert-danger">
+                    {{ form.non_field_errors }}
+                </div>
+            {% endif %}
+            <div class="mb-3">
+                {{ form.as_p }}
+                <small class="form-text text-muted">上传一张动漫相关图片（建议尺寸：200x200px）。如果不上传，将显示默认占位图。</small>
+            </div>
+            <div class="d-flex justify-content-center">
+                <button type="submit" class="btn btn-primary me-2">保存</button>
+                <a href="{% url 'admin_anime_navigation_list' %}" class="btn btn-secondary">取消</a>
+            </div>
+        </form>
+    </div>
+{% endblock %}
+
+<!-- 修改记录：
+1. Replaced manual field rendering with {{ form.as_p }} to ensure reliable field IDs and error display, matching category_create.html logic.
+2. Retained enctype="multipart/form-data" for image uploads.
+3. Kept non-field error display and image upload instructions.
+-->

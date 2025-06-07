@@ -1,0 +1,78 @@
+{% extends "blog/admin/base_admin.html" %}
+
+{% block title %}仪表盘{% endblock %}
+
+{% block content %}
+    <h2 class="text-center">欢迎来到CYT博客后台管理系统</h2>
+    <p class="text-center">在这里，您可以管理文章、分类、评论以及页面内容。开始您的管理之旅吧！</p>
+    <div class="row mt-4">
+        <div class="col-md-4">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h5 class="card-title">文章管理</h5>
+                    <p class="card-text">查看和编辑所有文章。</p>
+                    <a href="{% url 'admin_post_list' %}" class="btn btn-primary">前往</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h5 class="card-title">分类管理</h5>
+                    <p class="card-text">管理文章分类。</p>
+                    <a href="{% url 'admin_category_list' %}" class="btn btn-primary">前往</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h5 class="card-title">评论管理</h5>
+                    <p class="card-text">查看和删除评论。</p>
+                    <a href="{% url 'admin_comment_list' %}" class="btn btn-primary">前往</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mt-4">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h5 class="card-title">动漫导航</h5>
+                    <p class="card-text">管理热门动漫导航。</p>
+                    <a href="{% url 'admin_anime_navigation_list' %}" class="btn btn-primary">前往</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mt-4">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h5 class="card-title">网站导航</h5>
+                    <p class="card-text">管理常用网站导航。</p>
+                    <a href="{% url 'admin_website_navigation_list' %}" class="btn btn-primary">前往</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mt-4">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h5 class="card-title">关于我们</h5>
+                    <p class="card-text">编辑关于我们页面内容。</p>
+                    <a href="{% url 'admin_about_update' %}" class="btn btn-primary">前往</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mt-4">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h5 class="card-title">联系我们</h5>
+                    <p class="card-text">编辑联系我们页面内容。</p>
+                    <a href="{% url 'admin_contact_update' %}" class="btn btn-primary">前往</a>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+<!-- 修改记录：
+1. Added "动漫导航" and "网站导航" cards to the dashboard in a new row.
+2. Added "关于我们" and "联系我们" cards to the dashboard to match the navbar links.
+-->
