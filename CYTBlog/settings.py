@@ -2,11 +2,11 @@ from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = '537f53af7e74fe6d11913a1e80828a1338c07e3d7aadbda8'
+SECRET_KEY = 'set to your exactly SECRET_KEY'
 
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', '192.168.91.166', '59aa-240e-47e-c10-d401-d169-d04c-85ea-43b1.ngrok-free.app']
+ALLOWED_HOSTS = ['localhost', '127.0.0.1']
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -104,14 +104,3 @@ LOGOUT_REDIRECT_URL = '/'
 # SECURE_BROWSER_XSS_FILTER = True
 # SECURE_CONTENT_TYPE_NOSNIFF = True
 # X_FRAME_OPTIONS = 'DENY'
-
-# 添加 CSRF_TRUSTED_ORIGINS，包含 ngrok 的 HTTPS URL
-CSRF_TRUSTED_ORIGINS = [
-    'https://59aa-240e-47e-c10-d401-d169-d04c-85ea-43b1.ngrok-free.app',
-]
-
-# 修改记录：
-# 1. Added '192.168.91.166' to ALLOWED_HOSTS for LAN access.
-# 2. Added STATICFILES_FINDERS for explicit static file handling.
-# 3. Added CSRF_TRUSTED_ORIGINS to include the ngrok URL (https://0ec5-14-31-73-253.ngrok-free.app) to resolve CSRF validation failure.
-# 4. Previous changes retained: media settings, restricted ALLOWED_HOSTS, STATIC_ROOT, TEMPLATES DIRS, auth redirects, and production security comments.
