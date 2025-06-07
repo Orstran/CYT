@@ -1,0 +1,204 @@
+CYTBlog - 基于Django的个人博客系统
+
+1、项目简介
+
+CYTBlog 是一个使用 Python 和 Django 框架开发的个人博客系统，具备文章发布、分类管理、评论互动等功能，界面简洁美观，易于部署和扩展。
+
+2、环境要求
+
+- Python 3.8+
+- Django 4.2+
+- SQLite3（默认数据库，生产环境可切换为MySQL等）
+
+3、部署步骤
+
+3.1 克隆项目
+
+
+git clone https://github.com/Orstran/CYT-.git
+cd CYTBlog
+
+
+3.2 创建并激活虚拟环境（推荐）
+
+
+# Windows系统
+python -m venv venv
+venv\Scripts\activate
+
+# macOS/Linux系统
+python -m venv venv
+source venv/bin/activate
+
+
+3.3 安装依赖
+
+pip install -r requirements.txt
+
+4. 配置项目
+
+配置密钥（重要）
+
+# 编辑 CYTBlog/settings.py
+SECRET_KEY = '你的安全密钥'  # 替换为随机生成的安全密钥 （也可不管）
+
+
+可以通过以下方式生成安全密钥：
+
+python -c "import secrets; print(secrets.token_hex(24))"
+
+
+#### 配置数据库（可选）
+
+默认使用SQLite数据库，如需切换为MySQL：
+
+
+# 编辑 CYTBlog/settings.py
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'blog_db',
+        'USER': 'your_mysql_user',
+        'PASSWORD': 'your_mysql_password',
+        'HOST': 'localhost',
+        'PORT': '3306',
+    }
+}
+
+并安装MySQL驱动：
+
+pip install mysqlclient
+
+5. 迁移数据库
+
+python manage.py migrate
+
+6. 创建管理员账户
+
+
+python manage.py createsuperuser
+
+按照提示输入用户名、邮箱和密码。
+
+7. 收集静态文件
+
+python manage.py collectstatic
+
+8. 运行开发服务器
+
+python manage.py runserver
+
+访问 `http://127.0.0.1:8000` 即可查看博客首页，访问 `http://127.0.0.1:8000/admin` 进入管理后台。
+
+9. 项目结构
+
+CYTBlog/
+├── blog/                  # 博客应用
+│   ├── migrations/        # 数据库迁移文件
+│   ├── static/            # 静态文件
+│   ├── templates/         # 模板文件
+│   ├── admin.py           # 管理后台配置
+│   ├── apps.py            # 应用配置
+│   ├── forms.py           # 表单定义
+│   ├── models.py          # 数据模型
+│   ├── tests.py           # 测试文件
+│   ├── urls.py            # 应用路由
+│   └── views.py           # 视图函数
+├── CYTBlog/              # 项目配置
+│   ├── asgi.py            # ASGI配置
+│   ├── settings.py        # 项目设置
+│   ├── urls.py            # 项目路由
+│   └── wsgi.py            # WSGI配置
+├── media/                 # 上传媒体文件
+├── staticfiles/           # 收集的静态文件
+├── .gitignore            # Git忽略文件
+├── db.sqlite3            # 默认数据库
+├── manage.py             # 管理命令入口
+└── requirements.txt      # 依赖列表
+
+
+10. 功能特点
+
+- 文章发布与管理
+- 文章分类与标签
+- 评论系统
+- 响应式设计（适配桌面和移动设备）
+- 简单的搜索功能
+- 自定义主题配置
+
+11. 生产环境部署建议
+
+11.1 使用Gunicorn和Nginx
+
+pip install gunicorn
+
+11.2 创建Gunicorn启动脚本：
+
+gunicorn CYTBlog.wsgi:application --bind 127.0.0.1:8000
+
+11.3 配置Nginx反向代理：
+
+```nginx
+server {
+    listen 80;
+    server_name your_domain.com;
+    
+    location /static/ {
+        alias /path/to/CYTBlog/staticfiles/;
+    }
+    
+    location /media/ {
+        alias /path/to/CYTBlog/media/;
+    }
+    
+    location / {
+        proxy_pass http://127.0.0.1:8000;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+    }
+}
+
+
+11.4  配置HTTPS
+
+使用Let's Encrypt获取免费SSL证书：
+
+```bash
+certbot --nginx
+```
+
+11.5 配置生产环境设置
+
+```python
+# 编辑 CYTBlog/settings.py
+DEBUG = False
+ALLOWED_HOSTS = ['your_domain.com', 'www.your_domain.com']
+SECURE_SSL_REDIRECT = True
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
+SECURE_BROWSER_XSS_FILTER = True
+SECURE_CONTENT_TYPE_NOSNIFF = True
+X_FRAME_OPTIONS = 'DENY'
+```
+
+12. 常见问题解决
+
+1. **静态文件未加载**：
+   - 确保已执行 `python manage.py collectstatic`
+   - 检查Nginx配置中的静态文件路径是否正确
+
+2. **CSRF验证失败**：
+   - 确保在生产环境中已配置 `CSRF_TRUSTED_ORIGINS`
+   - 检查表单是否包含 `{% csrf_token %}`
+
+3. **数据库连接错误**：
+   - 确认数据库配置正确
+   - 检查数据库服务是否运行
+
+13. 贡献与反馈
+
+如果你发现任何问题或有改进建议，欢迎提交Issue或Pull Request。
+
+14. 许可证
+
+本项目遵循 [MIT许可证](LICENSE)。
