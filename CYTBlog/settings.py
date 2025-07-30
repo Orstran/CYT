@@ -1,12 +1,23 @@
+import os
+import dj_database_url
 from pathlib import Path
+from dotenv import load_dotenv
+
+load_dotenv()
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = 'set to your exactly SECRET_KEY'
+# 安全配置
+SECRET_KEY = os.environ.get('SECRET_KEY', 'your-fallback-secret-key')
+DEBUG = os.environ.get('DEBUG', 'False').lower() == 'true'
 
-DEBUG = True
-
-ALLOWED_HOSTS = ['localhost', '127.0.0.1']
+# 允许的主机
+ALLOWED_HOSTS = [
+    'localhost',
+    '127.0.0.1',
+    '.railway.app',  # Railway 域名
+    os.environ.get('RAILWAY_STATIC_URL', '').replace('https://', '').replace('http://', ''),
+]
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -20,8 +31,10 @@ INSTALLED_APPS = [
     'blog',
 ]
 
+# 中间件配置
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',  # 添加 WhiteNoise
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -50,12 +63,20 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'CYTBlog.wsgi.application'
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+# 数据库配置
+if 'DATABASE_URL' in os.environ:
+    # 生产环境使用 PostgreSQL
+    DATABASES = {
+        'default': dj_database_url.parse(os.environ.get('DATABASE_URL'))
     }
-}
+else:
+    # 开发环境使用 SQLite
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
+    }
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -78,19 +99,26 @@ USE_I18N = True
 USE_L10N = True
 USE_TZ = True
 
+# 静态文件配置
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [BASE_DIR / 'blog' / 'static']
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
-# 明确指定静态文件查找器
-STATICFILES_FINDERS = [
-    'django.contrib.staticfiles.finders.FileSystemFinder',
-    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
-]
+# WhiteNoise 配置
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
+# 媒体文件配置
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
+# 生产环境安全设置
+if not DEBUG:
+    SECURE_SSL_REDIRECT = True
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+    SECURE_BROWSER_XSS_FILTER = True
+    SECURE_CONTENT_TYPE_NOSNIFF = True
+    X_FRAME_OPTIONS = 'DENY'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 LOGIN_URL = '/login/'

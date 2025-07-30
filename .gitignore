@@ -9,3 +9,4 @@ staticfiles/
 env/
 venv/
 .venv/
+.env

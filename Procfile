@@ -1,0 +1,1 @@
+web: gunicorn CYTBlog.wsgi --log-file -
